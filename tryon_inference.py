@@ -42,7 +42,7 @@ def run_inference(
     ])
 
     # Load and process images
-    print("image_path", image_path)
+    # print("image_path", image_path)
     image = load_image(image_path).convert("RGB").resize(size)
     mask = load_image(mask_path).convert("RGB").resize(size)
     garment = load_image(garment_path).convert("RGB").resize(size)
@@ -79,7 +79,6 @@ def run_inference(
     width = size[0]
     garment_result = result.crop((0, 0, width, size[1]))
     tryon_result = result.crop((width, 0, width * 2, size[1]))
-
     
     return garment_result, tryon_result
 
@@ -88,13 +87,13 @@ def main():
     parser.add_argument('--image', required=True, help='Path to the model image')
     parser.add_argument('--mask', required=True, help='Path to the agnostic mask')
     parser.add_argument('--garment', required=True, help='Path to the garment image')
-    parser.add_argument('--output-garment', default='flux_inpaint_garment.png', help='Output path for garment result')
-    parser.add_argument('--output-tryon', default='flux_inpaint_tryon.png', help='Output path for try-on result')
+    parser.add_argument('--output_garment', default='flux_inpaint_garment.png', help='Output path for garment result')
+    parser.add_argument('--output_tryon', default='flux_inpaint_tryon.png', help='Output path for try-on result')
     parser.add_argument('--steps', type=int, default=50, help='Number of inference steps')
-    parser.add_argument('--guidance-scale', type=float, default=30, help='Guidance scale')
+    parser.add_argument('--guidance_scale', type=float, default=30, help='Guidance scale')
     parser.add_argument('--seed', type=int, default=0, help='Random seed')
-    parser.add_argument('--width', type=int, default=768, help='Width')
-    parser.add_argument('--height', type=int, default=576, help='Height')
+    parser.add_argument('--width', type=int, default=576, help='Width')
+    parser.add_argument('--height', type=int, default=768, help='Height')
     
     args = parser.parse_args()
     
@@ -109,11 +108,8 @@ def main():
         seed=args.seed,
         size=(args.width, args.height)
     )
-    output_garment_path=args.output_garment,
-    output_tryon_path=args.output_tryon,
+    output_tryon_path=args.output_tryon
     
-    if output_garment_path is not None:
-        garment_result.save(output_garment_path)
     tryon_result.save(output_tryon_path)
     
     print("Successfully saved garment and try-on images")
