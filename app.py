@@ -66,7 +66,7 @@ def create_demo():
                     image_input = gr.ImageMask(
                         label="Model Image (Draw mask where garment should go)", 
                         type="pil",
-                        height=576,
+                        height=600,
                     )
                     gr.Examples(
                         examples=[
@@ -80,7 +80,7 @@ def create_demo():
                         label="Person Images",
                     )
                 with gr.Column():
-                    garment_input = gr.Image(label="Garment Image", type="pil", height=576)
+                    garment_input = gr.Image(label="Garment Image", type="pil", height=600)
                     gr.Examples(
                         examples=[
                             ["./example/garment/04564_00.jpg"],
