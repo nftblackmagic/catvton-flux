@@ -104,8 +104,6 @@ def main():
         image_path=args.image,
         mask_path=args.mask,
         garment_path=args.garment,
-        output_garment_path=args.output_garment,
-        output_tryon_path=args.output_tryon,
         num_steps=args.steps,
         guidance_scale=args.guidance_scale,
         seed=args.seed,

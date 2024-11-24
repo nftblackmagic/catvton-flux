@@ -27,11 +27,14 @@ Hugging Face: 🤗 [catvton-flux-alpha](https://huggingface.co/xiaozaa/catvton-f
 The model weights are trained on the [VITON-HD](https://github.com/shadow2496/VITON-HD) dataset.
 
 ## Prerequisites
+Make sure you are runing the code with VRAM >= 40GB. (I run all my experiments on a 80GB GPU, lower VRAM will cause OOM error. Will support lower VRAM in the future.)
+
 ```bash
 bash
 conda create -n flux python=3.10
 conda activate flux
 pip install -r requirements.txt
+huggingface-cli login
 ```
 
 ## Usage
@@ -49,7 +52,10 @@ Run the following command to start a gradio demo:
 ```bash
 python app.py
 ```
+Gradio demo:
 
+<!-- Option 2: Using a thumbnail linked to the video -->
+[![Demo](example/github.jpg)](example/github.mp4)
 
 ## TODO:
 - [x] Release the FID score
