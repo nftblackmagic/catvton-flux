@@ -27,7 +27,7 @@ Hugging Face: 🤗 [catvton-flux-alpha](https://huggingface.co/xiaozaa/catvton-f
 The model weights are trained on the [VITON-HD](https://github.com/shadow2496/VITON-HD) dataset.
 
 ## Prerequisites
-Make sure you are runing the code with VRAM >= 40GB. (I run all my experiments on a 80GB GPU, lower VRAM will cause OOM error. Will support lower VRAM in the future.)
+Make sure you are running the code with VRAM >= 40GB. (I run all my experiments on a 80GB GPU, lower VRAM will cause OOM error. Will support lower VRAM in the future.)
 
 ```bash
 bash
