@@ -57,7 +57,8 @@ def gradio_inference(
     guidance_scale=30.0, 
     seed=-1, 
     width=768,
-    height=1024
+    height=1024,
+    size_prompt=None
 ):
     """Wrapper function for Gradio interface"""
     # Use temporary directory
@@ -91,7 +92,8 @@ def gradio_inference(
                 num_steps=num_steps,
                 guidance_scale=guidance_scale,
                 seed=seed,
-                size=(width, height)
+                size=(width, height),
+                size_prompt=size_prompt
             )
             return tryon_result
         except Exception as e:
@@ -180,6 +182,11 @@ with gr.Blocks() as demo:
                 value=1024,
                 label="Height"
             )
+            size_prompt = gr.Textbox(
+                label="Clothing Size Prompt",
+                placeholder="e.g., 'size M', 'large fit', 'loose XXL'",
+                value=None
+            )
             
         
         submit_btn = gr.Button("Generate Try-On", variant="primary")
@@ -205,7 +212,8 @@ with gr.Blocks() as demo:
             guidance_scale,
             seed,
             width,
-            height
+            height,
+            size_prompt
         ],
         outputs=[tryon_output],
         api_name="try-on"

@@ -14,7 +14,8 @@ def run_inference(
     num_steps=50,
     guidance_scale=30,
     seed=42,
-    pipe=None
+    pipe=None,
+    size_prompt=None,
 ):
     # Build pipeline
     if pipe is None:
@@ -60,8 +61,13 @@ def run_inference(
     prompt = f"The pair of images highlights a clothing and its styling on a model, high resolution, 4K, 8K; " \
             f"[IMAGE1] Detailed product shot of a clothing" \
             f"[IMAGE2] The same cloth is worn by a model in a lifestyle setting."
+    
+    if size_prompt is not None or size_prompt != "":
+        prompt += f" The size of the clothing is {size_prompt}."
 
     generator = torch.Generator(device="cuda").manual_seed(seed)
+    
+    print("prompt", prompt)
 
     result = pipe(
         height=size[1],
@@ -94,7 +100,7 @@ def main():
     parser.add_argument('--seed', type=int, default=0, help='Random seed')
     parser.add_argument('--width', type=int, default=576, help='Width')
     parser.add_argument('--height', type=int, default=768, help='Height')
-    
+    parser.add_argument('--size_prompt', type=str, default=None, help='Size prompt')
     args = parser.parse_args()
     
     check_min_version("0.30.2")
@@ -106,7 +112,8 @@ def main():
         num_steps=args.steps,
         guidance_scale=args.guidance_scale,
         seed=args.seed,
-        size=(args.width, args.height)
+        size=(args.width, args.height),
+        size_prompt=args.size_prompt if args.size_prompt is not None else None,
     )
     output_tryon_path=args.output_tryon
     
