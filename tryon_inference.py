@@ -3,8 +3,11 @@ import torch
 from diffusers.utils import load_image, check_min_version
 from diffusers import FluxPriorReduxPipeline, FluxFillPipeline
 from diffusers import FluxTransformer2DModel
+from src.flux.custom_attention_processor import FluxAttnProcessorWithViz
+from diffusers.models.attention_processor import Attention
 import numpy as np
 from torchvision import transforms
+from attention_map import visualize_all_heads_all_layers
 
 def run_inference(
     image_path,
@@ -19,9 +22,15 @@ def run_inference(
     # Build pipeline
     if pipe is None:
         transformer = FluxTransformer2DModel.from_pretrained(
-            "xiaozaa/catvton-flux-alpha", 
+            "xiaozaa/catvton-flux-beta", 
             torch_dtype=torch.bfloat16
         )
+        transformer.set_attn_processor(FluxAttnProcessorWithViz())
+        
+        # for name, module in transformer.named_modules():
+        #     if "attn" in name:
+        #         print(name, module)
+        
         pipe = FluxFillPipeline.from_pretrained(
             "black-forest-labs/FLUX.1-dev",
             transformer=transformer,
@@ -62,19 +71,39 @@ def run_inference(
             f"[IMAGE2] The same cloth is worn by a model in a lifestyle setting."
 
     generator = torch.Generator(device="cuda").manual_seed(seed)
-
+    max_sequence_length = 512
+    height = size[1]
+    width = size[0] * 2
     result = pipe(
-        height=size[1],
-        width=size[0] * 2,
+        height=height,
+        width=width,
         image=inpaint_image,
         mask_image=extended_mask,
         num_inference_steps=num_steps,
         generator=generator,
-        max_sequence_length=512,
+        max_sequence_length=max_sequence_length,
         guidance_scale=guidance_scale,
         prompt=prompt,
     ).images[0]
-
+    
+    all_attention_probs = []
+    for name, module in pipe.transformer.named_modules():
+        if isinstance(module, Attention) and hasattr(module, 'processor') and \
+           isinstance(module.processor, FluxAttnProcessorWithViz):
+            all_attention_probs.append(module.processor.last_attention_probs[:, max_sequence_length:, max_sequence_length:])
+            print(name, module)
+    
+    visualize_all_heads_all_layers(
+        all_attention_probs,  # List of attention tensors from all layers
+        original_image=inpaint_image,
+        latent_height=height//16,  # Adjust to match your model dimensions
+        latent_width=width//16,   # Adjust to match your model dimensions
+        save_path="all_heads_all_layers.png",
+        colormap='plasma',
+        brightness_factor=2.5,
+        threshold=0.6,
+    )
+    
     # Split and save results
     width = size[0]
     garment_result = result.crop((0, 0, width, size[1]))

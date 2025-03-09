@@ -4,4 +4,4 @@ python tryon_inference.py \
 --garment ./example/garment/00034_00.jpg \
 --seed 42 \
 --output_tryon test.png \
---steps 30
+--steps 20
